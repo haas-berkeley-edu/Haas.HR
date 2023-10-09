@@ -18,7 +18,14 @@
         /// <param name="settings"></param>
         /// <returns></returns>
         IHrDataSourceDownloadResult DownloadEmployeeData(IHRDataSourceDownloadSettings settings);
- 
+
+        /// <summary>
+        /// Merges data from the Employee table associated with this Hr Data Source into the Employee Master record
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        IHrDataSourceMergeResult MergeEmployeeData(IHRDataSourceMergeSettings settings);
+
         /// <summary>
         /// Returns the URL to the profile view for the specified user id in the HR Data Source
         /// </summary>
@@ -54,6 +61,21 @@
     /// Contains the settings to use as part of the download operation
     /// </summary>
     public interface IHRDataSourceDownloadSettings
+    {
+
+    }
+
+    /// <summary>
+    /// Contains the result of a data source merge
+    /// </summary>
+    public interface IHrDataSourceMergeResult
+    {
+    }
+
+    /// <summary>
+    /// Contains the settings to use as part of the merge operation
+    /// </summary>
+    public interface IHRDataSourceMergeSettings
     {
 
     }

@@ -25,5 +25,10 @@ namespace Haas.HR
         {
             throw new NotImplementedException();
         }
+
+        public virtual IHrDataSourceMergeResult MergeEmployeeData(IHRDataSourceMergeSettings settings)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
