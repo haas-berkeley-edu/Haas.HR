@@ -126,6 +126,11 @@ namespace Haas.HR
             return results;
         }
 
+        public static HRDbContext HRDbContext
+        {
+            get { return context; }
+        }
+
         private IHRDataSource? GetHRDataSource(string typeName)
         {
             Type? type = Type.GetType(typeName);
