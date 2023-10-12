@@ -111,4 +111,45 @@ namespace Haas.HR
             get { return this.connectionSettings; }
         }
     }
+
+    public class HRDataSourceUploadResult : IHRDataSourceUploadResult
+    {
+
+    }
+
+    public class HRDataSourceDownloadResult : IHRDataSourceDownloadResult
+    {
+
+    }
+
+    public class HRDataSourceMergeResult : IHRDataSourceMergeResult
+    {
+
+    }
+
+    public class HRDataSourceSynchronizeResult : IHRDataSourceSynchronizeResult
+    {
+        public IHRDataSourceConnectionSettings? ConnectionSettings
+        {
+            get;
+            set;
+        }
+
+        public IHRDataSourceUploadResult? UploadResult
+        {
+            get;
+            set;
+        }
+
+        public IHRDataSourceDownloadResult? DownloadResult
+        {
+            get;
+            set;
+        }
+        public IHRDataSourceMergeResult? MergeResult
+    {
+            get;
+            set;
+        }
+    }
 }

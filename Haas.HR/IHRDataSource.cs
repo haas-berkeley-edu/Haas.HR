@@ -54,9 +54,10 @@
     /// </summary>
     public interface IHRDataSourceSynchronizeResult
     {
-        IHRDataSourceUploadResult UploadResult { get; }
-        IHRDataSourceDownloadResult DownloadResult { get; }
-        IHRDataSourceMergeResult MergeResult { get; }
+        IHRDataSourceConnectionSettings ConnectionSettings { get; set; }
+        IHRDataSourceUploadResult UploadResult { get; set; }
+        IHRDataSourceDownloadResult DownloadResult { get; set;  }
+        IHRDataSourceMergeResult MergeResult { get; set; }
     }
 
     /// <summary>
@@ -119,7 +120,7 @@
         string UserName { get; set; }
         string Password { get; set; }
         string URL { get; set; }
-        string Type { get; set; }
+        string TypeName { get; set; }
         int ExecutionOrder { get; set; }
     }
 }

@@ -8,13 +8,13 @@ namespace Haas.HR.Models
 {
     public class HRDataSourceConnectionSettings : IHRDataSourceConnectionSettings
     {
-        public int ID { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Desription { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string UserName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Password { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string URL { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Type { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int ExecutionOrder { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public string Desription { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public string URL { get; set; }
+        public string TypeName { get; set; }
+        public int ExecutionOrder { get; set; }
     }
 }

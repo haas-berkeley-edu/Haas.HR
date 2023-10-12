@@ -9,6 +9,12 @@ namespace Haas.HR
 {
     public class HRDataSourceManager
     {
+        private static HRDbContext context;
+
+        static HRDataSourceManager() {
+            context = new HRDbContext(null);
+        }
+
         /// <summary>
         /// Uploads data from the HR Data Wharehouse into HR Data Source
         /// </summary>
@@ -16,11 +22,41 @@ namespace Haas.HR
         /// <returns></returns>
         public List<IHRDataSourceSynchronizeResult> SynchronizeEmployeeData(IHRDataSourceSynchronizeSettings settings)
         {
-            HRDbContext context = new HRDbContext(null);
-            List<IHRDataSourceSynchronizeResult> results = null;
-            List<IHRDataSourceDownloadResult> downloadResults = this.DownloadEmployeeData(settings.DownloadSettings);
-            List<IHRDataSourceMergeResult> mergeResults = this.MergeEmployeeData(settings.MergeSettings);
-            List<IHRDataSourceUploadResult> uploadResults = this.UploadEmployeeData(settings.UploadSettings);
+            List<IHRDataSourceSynchronizeResult> results = new List<IHRDataSourceSynchronizeResult>();
+            foreach (IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings)
+            {
+                HRDataSourceSynchronizeResult result = new HRDataSourceSynchronizeResult();
+                IHRDataSource? hrDataSource = this.GetHRDataSource(connectionSettings.TypeName);
+                if (hrDataSource == null)
+                {
+                    continue;
+                }
+                HRDataSourceDownloadSettings downloadSettings = new HRDataSourceDownloadSettings(connectionSettings);
+                result.DownloadResult = hrDataSource.DownloadEmployeeData(downloadSettings);
+                results.Add(result);
+            }
+            foreach (IHRDataSourceSynchronizeResult result in results)
+            {
+                IHRDataSource? hrDataSource = this.GetHRDataSource(result.ConnectionSettings.TypeName);
+                if (hrDataSource == null)
+                {
+                    continue;
+                }
+                HRDataSourceMergeSettings mergeSettings = new HRDataSourceMergeSettings(result.ConnectionSettings);
+                result.MergeResult = hrDataSource.MergeEmployeeData(mergeSettings);
+                results.Add(result);
+            }
+            foreach (IHRDataSourceSynchronizeResult result in results)
+            {
+                IHRDataSource? hrDataSource = this.GetHRDataSource(result.ConnectionSettings.TypeName);
+                if (hrDataSource == null)
+                {
+                    continue;
+                }
+                HRDataSourceUploadSettings mergeSettings = new HRDataSourceUploadSettings(result.ConnectionSettings);
+                result.UploadResult = hrDataSource.UploadEmployeeData(mergeSettings);
+                results.Add(result);
+            }
             return results;
         }
 
@@ -29,13 +65,12 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public List<IHRDataSourceUploadResult> UploadEmployeeData(IHRDataSourceUploadSettings settings)
+        public List<IHRDataSourceUploadResult> UploadAllEmployeeData(IHRDataSourceUploadSettings settings)
         {
-            HRDbContext context = new HRDbContext(null);
             List<IHRDataSourceUploadResult> results = new List<IHRDataSourceUploadResult>();
             foreach(IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings)
             {
-                IHRDataSource? hrDataSource = this.GetHRDataSource(connectionSettings.Type);
+                IHRDataSource? hrDataSource = this.GetHRDataSource(connectionSettings.TypeName);
                 if (hrDataSource == null)
                 {
                     continue;
@@ -52,13 +87,12 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public List<IHRDataSourceDownloadResult> DownloadEmployeeData(IHRDataSourceDownloadSettings settings)
+        public List<IHRDataSourceDownloadResult> DownloadAllEmployeeData(IHRDataSourceDownloadSettings settings)
         {
-            HRDbContext context = new HRDbContext(null);
             List<IHRDataSourceDownloadResult> results = new List<IHRDataSourceDownloadResult>();
             foreach (IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings)
             {
-                IHRDataSource? hrDataSource = this.GetHRDataSource(connectionSettings.Type);
+                IHRDataSource? hrDataSource = this.GetHRDataSource(connectionSettings.TypeName);
                 if (hrDataSource == null)
                 {
                     continue;
@@ -75,13 +109,12 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public List<IHRDataSourceMergeResult> MergeEmployeeData(IHRDataSourceMergeSettings settings)
+        public List<IHRDataSourceMergeResult> MergeAllEmployeeData(IHRDataSourceMergeSettings settings)
         {
-            HRDbContext context = new HRDbContext(null);
             List<IHRDataSourceMergeResult> results = new List<IHRDataSourceMergeResult>();
             foreach (IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings)
             {
-                IHRDataSource? hrDataSource = this.GetHRDataSource(connectionSettings.Type);
+                IHRDataSource? hrDataSource = this.GetHRDataSource(connectionSettings.TypeName);
                 if (hrDataSource == null)
                 {
                     continue;
