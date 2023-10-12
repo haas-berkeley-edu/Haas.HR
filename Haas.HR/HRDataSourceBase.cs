@@ -54,6 +54,10 @@ namespace Haas.HR
     public class HRDataSourceSynchronizeSettings : IHRDataSourceSynchronizeSettings
     {
         private IHRDataSourceConnectionSettings connectionSettings = null;
+        private IHRDataSourceMergeSettings mergeSettings = null;
+        private IHRDataSourceUploadSettings uploadSettings = null;
+        private IHRDataSourceDownloadSettings downloadSettings = null;
+
         public HRDataSourceSynchronizeSettings(IHRDataSourceConnectionSettings connectionSettings)
         {
             this.connectionSettings = connectionSettings;
@@ -62,6 +66,21 @@ namespace Haas.HR
         public IHRDataSourceConnectionSettings ConnectionSettings
         {
             get { return this.connectionSettings; }
+        }
+
+        public IHRDataSourceUploadSettings UploadSettings
+        {
+            get { return this.uploadSettings; }
+        }
+
+        public IHRDataSourceDownloadSettings DownloadSettings
+        {
+            get { return this.downloadSettings; }
+        }
+
+        public IHRDataSourceMergeSettings MergeSettings
+        {
+            get { return this.mergeSettings; }
         }
     }
 

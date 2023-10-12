@@ -17,18 +17,10 @@ namespace Haas.HR
         public List<IHRDataSourceSynchronizeResult> SynchronizeEmployeeData(IHRDataSourceSynchronizeSettings settings)
         {
             HRDbContext context = new HRDbContext(null);
-            List<IHRDataSourceSynchronizeResult> results = new List<IHRDataSourceSynchronizeResult>();
-            foreach (IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings)
-            {
-                IHRDataSource? hrDataSource = this.GetHRDataSource(connectionSettings.Type);
-                if (hrDataSource == null)
-                {
-                    continue;
-                }
-                IHRDataSourceUploadSettings UploadSettings = new HRDataSourceUploadSettings(connectionSettings);
-                IHRDataSourceUploadResult result = hrDataSource.UploadEmployeeData(UploadSettings);
-                results.Add(result);
-            }
+            List<IHRDataSourceSynchronizeResult> results = null;
+            List<IHRDataSourceDownloadResult> downloadResults = this.DownloadEmployeeData(settings.DownloadSettings);
+            List<IHRDataSourceMergeResult> mergeResults = this.MergeEmployeeData(settings.MergeSettings);
+            List<IHRDataSourceUploadResult> uploadResults = this.UploadEmployeeData(settings.UploadSettings);
             return results;
         }
 

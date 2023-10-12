@@ -54,9 +54,9 @@
     /// </summary>
     public interface IHRDataSourceSynchronizeResult
     {
-        IHRDataSourceUploadResult UploadResult { get; set; }
-        IHRDataSourceDownloadResult DownloadResult { get; set; }
-        IHRDataSourceMergeResult MergeResult { get; set; }
+        IHRDataSourceUploadResult UploadResult { get; }
+        IHRDataSourceDownloadResult DownloadResult { get; }
+        IHRDataSourceMergeResult MergeResult { get; }
     }
 
     /// <summary>
@@ -65,6 +65,9 @@
     public interface IHRDataSourceSynchronizeSettings
     {
         IHRDataSourceConnectionSettings ConnectionSettings { get; }
+        IHRDataSourceUploadSettings UploadSettings { get; }
+        IHRDataSourceDownloadSettings DownloadSettings { get; }
+        IHRDataSourceMergeSettings MergeSettings { get; }
     }
 
     /// <summary>
