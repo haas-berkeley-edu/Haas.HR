@@ -20,10 +20,10 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public List<IHRDataSourceSynchronizeResult> SynchronizeEmployeeData(IHRDataSourceSynchronizeSettings settings)
+        public List<IHRDataSourceSynchronizeResult> SynchronizeAllEmployeeData(IHRDataSourceSynchronizeSettings settings)
         {
             List<IHRDataSourceSynchronizeResult> results = new List<IHRDataSourceSynchronizeResult>();
-            foreach (IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings)
+            foreach (IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings.OrderBy(a => a.ExecutionOrder))
             {
                 HRDataSourceSynchronizeResult result = new HRDataSourceSynchronizeResult();
                 IHRDataSource? hrDataSource = this.GetHRDataSource(connectionSettings.TypeName);
@@ -68,7 +68,7 @@ namespace Haas.HR
         public List<IHRDataSourceUploadResult> UploadAllEmployeeData(IHRDataSourceUploadSettings settings)
         {
             List<IHRDataSourceUploadResult> results = new List<IHRDataSourceUploadResult>();
-            foreach(IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings)
+            foreach(IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings.OrderBy(a => a.ExecutionOrder))
             {
                 IHRDataSource? hrDataSource = this.GetHRDataSource(connectionSettings.TypeName);
                 if (hrDataSource == null)
@@ -90,7 +90,7 @@ namespace Haas.HR
         public List<IHRDataSourceDownloadResult> DownloadAllEmployeeData(IHRDataSourceDownloadSettings settings)
         {
             List<IHRDataSourceDownloadResult> results = new List<IHRDataSourceDownloadResult>();
-            foreach (IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings)
+            foreach (IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings.OrderBy(a => a.ExecutionOrder))
             {
                 IHRDataSource? hrDataSource = this.GetHRDataSource(connectionSettings.TypeName);
                 if (hrDataSource == null)
@@ -112,7 +112,7 @@ namespace Haas.HR
         public List<IHRDataSourceMergeResult> MergeAllEmployeeData(IHRDataSourceMergeSettings settings)
         {
             List<IHRDataSourceMergeResult> results = new List<IHRDataSourceMergeResult>();
-            foreach (IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings)
+            foreach (IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings.OrderBy(a => a.ExecutionOrder))
             {
                 IHRDataSource? hrDataSource = this.GetHRDataSource(connectionSettings.TypeName);
                 if (hrDataSource == null)

@@ -8,10 +8,12 @@ namespace Haas.HR.Models
 {
     public interface IEmployee
     {
-        int ID { get; set; }
+        string ID { get; set; }
 
-        DateTime CreateOn { get; set; }
-        DateTime LastUpdatedOn { get; set; }
-        DateTime DeletedOn { get; set; }
+        string UID { get; set; }
+
+        DateTime? CreateOn { get; set; }
+        DateTime? LastUpdatedOn { get; set; }
+        DateTime? DeletedOn { get; set; }
     }
 }

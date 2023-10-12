@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Haas.HR.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,6 +36,47 @@ namespace Haas.HR
         {
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Returns the employee data for the specified settings
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        public virtual List<IEmployee> GetSourceEmployees(IHRDataSourceConnectionSettings settings)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns the employee data for the specified settings
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        public IEmployee AddSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns the employee data for the specified settings
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        public IEmployee DeleteSourceEmployee(IHRDataSourceConnectionSettings settings, string ID)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns the employee data for the specified settings
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        public IEmployee UpdateSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 
     public class HRDataSourceDownloadSettings : IHRDataSourceDownloadSettings

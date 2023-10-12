@@ -1,4 +1,6 @@
-﻿namespace Haas.HR
+﻿using Haas.HR.Models;
+
+namespace Haas.HR
 {
     /// <summary>
     /// Interface implemented by any HR Data Source that contributes data to a Haas employee
@@ -11,6 +13,34 @@
         /// <param name="settings"></param>
         /// <returns></returns>
         IHRDataSourceSynchronizeResult SynchronizeEmployeeData(IHRDataSourceSynchronizeSettings settings);
+
+        /// <summary>
+        /// Returns the employee data for the specified settings
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        List<IEmployee> GetSourceEmployees(IHRDataSourceConnectionSettings settings);
+
+        /// <summary>
+        /// Returns the employee data for the specified settings
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        IEmployee AddSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee);
+
+        /// <summary>
+        /// Returns the employee data for the specified settings
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        IEmployee DeleteSourceEmployee(IHRDataSourceConnectionSettings settings, string ID);
+
+        /// <summary>
+        /// Returns the employee data for the specified settings
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        IEmployee UpdateSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee);
 
         /// <summary>
         /// Uploads data from the HR Data Wharehouse into HR Data Source

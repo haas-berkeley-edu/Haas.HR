@@ -23,54 +23,72 @@ namespace Haas.HR
         public override IHRDataSourceDownloadResult DownloadEmployeeData(IHRDataSourceDownloadSettings settings)
         {
             IHRDataSourceDownloadResult result = new HRDataSourceDownloadResult();
-            //add logic to call Pingboard using connection settings
-
-            //loop through results
-
-            //find empmployee
-            //HRDataSourceManager.HRDbContext.PingboardEmployees.Find()
-
-            //if does not exist add it
-
-            //if exists update it
-
-            //loop through existing employees and see if they exist in this result set
-
-            //if they don't then update the DeletedOn date field value
-
+            List<IEmployee> pingboardEmployees = this.GetSourceEmployees(settings.ConnectionSettings);
+            foreach(IEmployee employee in pingboardEmployees)
+            {
+                //check to see if the master employee record exists, if it does not then do nothing since only UCPath can create
+                //new master employee records
+                PingboardEmployee pingboardEmployee = (PingboardEmployee)employee;
+                PingboardEmployee existingPingboardEmployee = HRDataSourceManager.HRDbContext.PingboardEmployees.Single(a => a.UID == pingboardEmployee.UID);
+                if (existingPingboardEmployee == null)
+                {
+                    //if record does not exist then add it
+                    pingboardEmployee.CreateOn = DateTime.Now;
+                    HRDataSourceManager.HRDbContext.PingboardEmployees.Add(pingboardEmployee);
+                    continue;
+                }
+                //update the pingboard employee record with the values in pingboard
+                pingboardEmployee.CreateOn = existingPingboardEmployee.CreateOn;
+                pingboardEmployee.DeletedOn = existingPingboardEmployee.DeletedOn;
+                pingboardEmployee.LastUpdatedOn = DateTime.Now;
+                HRDataSourceManager.HRDbContext.PingboardEmployees.Update(pingboardEmployee);
+            }
             return result;
         }
 
         public override string GetEmployeeProfileUrl(string uid)
         {
-            throw new NotImplementedException();
+            PingboardEmployee pingboardEmployee = HRDataSourceManager.HRDbContext.PingboardEmployees.Single(a => a.UID == uid);
+            if (pingboardEmployee == null)
+            {
+                return null;
+            }
+            return "https://orgchart.haas.berkele.edu/id=" + pingboardEmployee.ID;
         }
 
         public override IHRDataSourceUploadResult UploadEmployeeData(IHRDataSourceUploadSettings settings)
         {
             IHRDataSourceUploadResult result = new HRDataSourceUploadResult();
-            //get curent employee records
+            List<IEmployee> cloudPingboardEmployees = this.GetSourceEmployees(settings.ConnectionSettings);
 
-            //get all master employee records
+            //loop through existing pingboard employees
+            foreach (PingboardEmployee pingboardEmployee in HRDataSourceManager.HRDbContext.PingboardEmployees)
+            {
+                //check to see if the master employee record exists, if it does not then do nothing since only UCPath can create
+                //new master employee records
+                IEmployee cloudEmployee = cloudPingboardEmployees.Single(a => a.ID == pingboardEmployee.ID);
+                PingboardEmployee cloudPingboardEmployee = (PingboardEmployee)cloudEmployee;
+                if (cloudPingboardEmployee == null)
+                {
+                    //if record does not exist then add it
+                    this.AddSourceEmployee(settings.ConnectionSettings, pingboardEmployee);
+                    continue;
+                }
+                //update the pingboard employee record with the values in pingboard
+                this.UpdateSourceEmployee(settings.ConnectionSettings, pingboardEmployee);
+            }
 
-            //if the record does not exist in Pingboard then create it and determine if we can assign someone they report to
-            //logic should take into account that some highe level leaders at Haas like Dean and Erika should not have anyone auto assigned to them
-            //Add them also to the new staff or faculty group
-
-            //if the record exists then update it with latest values along with alst updated date
-
-            //if the master employee record is deleted the update the deleted field
-
-            //get all of the pingboard recors in the cloud
-
-            //loop through all of those records
-
-            //if the record does not exist, then cfreate it
-
-            //if the record exists, and the deletedOn field is null then update it
-
-            //if the record is deleted then disable it in Pingboard
-
+            //loop through the cloud pingboard employees
+            foreach(IEmployee cloudEmployee in cloudPingboardEmployees)
+            {
+                PingboardEmployee cloudPingboardEmployee = (PingboardEmployee)cloudEmployee;
+                PingboardEmployee existingPingboardEmployee = HRDataSourceManager.HRDbContext.PingboardEmployees.Single(a => a.ID == cloudEmployee.ID);
+                if (existingPingboardEmployee.DeletedOn != null)
+                {
+                    continue;
+                }
+                this.DeleteSourceEmployee(settings.ConnectionSettings, cloudEmployee.ID);
+            }
             return result;
         }
 
@@ -82,7 +100,7 @@ namespace Haas.HR
             foreach(PingboardEmployee pingboardEmployee in HRDataSourceManager.HRDbContext.PingboardEmployees)
             {
                 //if the record exists in the master employee record then update it with the Working Title and Reports To
-                MasterEmployee? masterEmployee = HRDataSourceManager.HRDbContext.MasterEmployees.Find(null);
+                MasterEmployee? masterEmployee = HRDataSourceManager.HRDbContext.MasterEmployees.Single(a => a.ID == pingboardEmployee.ID);
                 if (masterEmployee == null)
                 {
                     continue;
