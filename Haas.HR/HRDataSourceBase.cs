@@ -48,7 +48,19 @@ namespace Haas.HR
 
         public virtual IHRDataSourceSynchronizeResult SynchronizeEmployeeData(IHRDataSourceSynchronizeSettings settings)
         {
-            throw new NotImplementedException();
+            IHRDataSourceSynchronizeResult result = new HRDataSourceSynchronizeResult();
+            result.DownloadResult = this.DownloadEmployeeData(settings.DownloadSettings);
+            if (result.DownloadResult == null)
+            {
+                return result;
+            }
+            result.MergeResult = this.MergeEmployeeData(settings.MergeSettings);
+            if (result.MergeResult == null)
+            {
+                return result;
+            }
+            result.UploadResult = this.UploadEmployeeData(settings.UploadSettings);
+            return result;
         }
 
         public virtual IHRDataSourceUploadResult UploadEmployeeData(IHRDataSourceUploadSettings settings)
@@ -109,64 +121,40 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public virtual IList<IEmployee> GetSourceEmployees(IHRDataSourceConnectionSettings settings)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract IList<IEmployee> GetSourceEmployees(IHRDataSourceConnectionSettings settings);
 
         /// <summary>
         /// Returns the employee data for the specified settings
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public virtual IEmployee AddSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract IEmployee AddSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee);
 
         /// <summary>
         /// Returns the employee data for the specified settings
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public virtual IEmployee DeleteSourceEmployee(IHRDataSourceConnectionSettings settings, string ID)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract IEmployee DeleteSourceEmployee(IHRDataSourceConnectionSettings settings, string ID);
 
         /// <summary>
         /// Returns the employee data for the specified settings
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public virtual IEmployee UpdateSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract IEmployee UpdateSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee);
 
         /// <summary>
         /// Returns the DbSet of employees from the databasefor this HRDataSource 
         /// </summary>
         /// <returns></returns>
-        public virtual IList<IEmployee> GetDestinationEmployees()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract IList<IEmployee> GetDestinationEmployees();
 
-        public virtual IEmployee AddDestinationEmployee(IEmployee employee)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract IEmployee AddDestinationEmployee(IEmployee employee);
 
-        public virtual IEmployee DeleteDestinationEmployee(IEmployee employee)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract IEmployee DeleteDestinationEmployee(IEmployee employee);
 
-        public virtual IEmployee UpdateDestinationEmployee(IEmployee employee)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract IEmployee UpdateDestinationEmployee(IEmployee employee);
     }
 
     public class HRDataSourceDownloadSettings : IHRDataSourceDownloadSettings
