@@ -11,7 +11,7 @@ namespace Haas.HR
     /// </summary>
     public abstract class HRDataSourceBase : IHRDataSource
     {
-        public virtual IHrDataSourceDownloadResult DownloadEmployeeData(IHRDataSourceDownloadSettings settings)
+        public virtual IHRDataSourceDownloadResult DownloadEmployeeData(IHRDataSourceDownloadSettings settings)
         {
             throw new NotImplementedException();
         }
@@ -21,14 +21,75 @@ namespace Haas.HR
             throw new NotImplementedException();
         }
 
-        public virtual IHrDataSourceUploadResult UploadEmployeeData(IHRDataSourceUploadSettings settings)
+        public virtual IHRDataSourceSynchronizeResult SynchronizeEmployeeData(IHRDataSourceSynchronizeSettings settings)
         {
             throw new NotImplementedException();
         }
 
-        public virtual IHrDataSourceMergeResult MergeEmployeeData(IHRDataSourceMergeSettings settings)
+        public virtual IHRDataSourceUploadResult UploadEmployeeData(IHRDataSourceUploadSettings settings)
         {
             throw new NotImplementedException();
+        }
+
+        public virtual IHRDataSourceMergeResult MergeEmployeeData(IHRDataSourceMergeSettings settings)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class HRDataSourceDownloadSettings : IHRDataSourceDownloadSettings
+    {
+        private IHRDataSourceConnectionSettings connectionSettings = null;
+        public HRDataSourceDownloadSettings(IHRDataSourceConnectionSettings connectionSettings)
+        {
+            this.connectionSettings = connectionSettings;
+        }
+
+        public IHRDataSourceConnectionSettings ConnectionSettings
+        {
+            get { return this.connectionSettings; }
+        }
+    }
+
+    public class HRDataSourceSynchronizeSettings : IHRDataSourceSynchronizeSettings
+    {
+        private IHRDataSourceConnectionSettings connectionSettings = null;
+        public HRDataSourceSynchronizeSettings(IHRDataSourceConnectionSettings connectionSettings)
+        {
+            this.connectionSettings = connectionSettings;
+        }
+
+        public IHRDataSourceConnectionSettings ConnectionSettings
+        {
+            get { return this.connectionSettings; }
+        }
+    }
+
+    public class HRDataSourceUploadSettings : IHRDataSourceUploadSettings
+    {
+        private IHRDataSourceConnectionSettings connectionSettings = null;
+        public HRDataSourceUploadSettings(IHRDataSourceConnectionSettings connectionSettings)
+        {
+            this.connectionSettings = connectionSettings;
+        }
+
+        public IHRDataSourceConnectionSettings ConnectionSettings
+        {
+            get { return this.connectionSettings; }
+        }
+    }
+
+    public class HRDataSourceMergeSettings : IHRDataSourceMergeSettings
+    {
+        private IHRDataSourceConnectionSettings connectionSettings = null;
+        public HRDataSourceMergeSettings(IHRDataSourceConnectionSettings connectionSettings)
+        {
+            this.connectionSettings = connectionSettings;
+        }
+
+        public IHRDataSourceConnectionSettings ConnectionSettings
+        {
+            get { return this.connectionSettings; }
         }
     }
 }

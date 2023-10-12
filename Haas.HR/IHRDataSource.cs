@@ -10,21 +10,28 @@
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        IHrDataSourceUploadResult UploadEmployeeData(IHRDataSourceUploadSettings settings);
+        IHRDataSourceSynchronizeResult SynchronizeEmployeeData(IHRDataSourceSynchronizeSettings settings);
+
+        /// <summary>
+        /// Uploads data from the HR Data Wharehouse into HR Data Source
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        IHRDataSourceUploadResult UploadEmployeeData(IHRDataSourceUploadSettings settings);
 
         /// <summary>
         /// Downloads data from the HR Data Source into the HR Data Wharehouse
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        IHrDataSourceDownloadResult DownloadEmployeeData(IHRDataSourceDownloadSettings settings);
+        IHRDataSourceDownloadResult DownloadEmployeeData(IHRDataSourceDownloadSettings settings);
 
         /// <summary>
         /// Merges data from the Employee table associated with this Hr Data Source into the Employee Master record
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        IHrDataSourceMergeResult MergeEmployeeData(IHRDataSourceMergeSettings settings);
+        IHRDataSourceMergeResult MergeEmployeeData(IHRDataSourceMergeSettings settings);
 
         /// <summary>
         /// Returns the URL to the profile view for the specified user id in the HR Data Source
@@ -37,9 +44,27 @@
     /// <summary>
     /// Contains the result of a data source upload
     /// </summary>
-    public interface IHrDataSourceUploadResult
+    public interface IHRDataSourceUploadResult
     {
 
+    }
+
+    /// <summary>
+    /// Contains the result of a data source upload
+    /// </summary>
+    public interface IHRDataSourceSynchronizeResult
+    {
+        IHRDataSourceUploadResult UploadResult { get; set; }
+        IHRDataSourceDownloadResult DownloadResult { get; set; }
+        IHRDataSourceMergeResult MergeResult { get; set; }
+    }
+
+    /// <summary>
+    /// Contains the settings to use as part of the data source upload
+    /// </summary>
+    public interface IHRDataSourceSynchronizeSettings
+    {
+        IHRDataSourceConnectionSettings ConnectionSettings { get; }
     }
 
     /// <summary>
@@ -47,13 +72,13 @@
     /// </summary>
     public interface IHRDataSourceUploadSettings
     {
-
+        IHRDataSourceConnectionSettings ConnectionSettings { get; }
     }
 
     /// <summary>
     /// Contains the result of a data source download
     /// </summary>
-    public interface IHrDataSourceDownloadResult
+    public interface IHRDataSourceDownloadResult
     {
     }
 
@@ -62,13 +87,13 @@
     /// </summary>
     public interface IHRDataSourceDownloadSettings
     {
-
+        IHRDataSourceConnectionSettings ConnectionSettings { get; }
     }
 
     /// <summary>
     /// Contains the result of a data source merge
     /// </summary>
-    public interface IHrDataSourceMergeResult
+    public interface IHRDataSourceMergeResult
     {
     }
 
@@ -77,6 +102,21 @@
     /// </summary>
     public interface IHRDataSourceMergeSettings
     {
+        IHRDataSourceConnectionSettings ConnectionSettings { get; }
+    }
 
+    /// <summary>
+    /// Contains the settings to use to connect to a HR Data Source
+    /// </summary>
+    public interface IHRDataSourceConnectionSettings
+    {
+        int ID { get; set; }
+        string Name { get; set; }
+        string Desription { get; set; }
+        string UserName { get; set; }
+        string Password { get; set; }
+        string URL { get; set; }
+        string Type { get; set; }
+        int ExecutionOrder { get; set; }
     }
 }

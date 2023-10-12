@@ -16,7 +16,7 @@ namespace Haas.HR
     /// </summary>
     public class PingboardDataSource : HRDataSourceBase
     {
-        public override IHrDataSourceDownloadResult DownloadEmployeeData(IHRDataSourceDownloadSettings settings)
+        public override IHRDataSourceDownloadResult DownloadEmployeeData(IHRDataSourceDownloadSettings settings)
         {
             throw new NotImplementedException();
         }
@@ -26,7 +26,7 @@ namespace Haas.HR
             throw new NotImplementedException();
         }
 
-        public override IHrDataSourceUploadResult UploadEmployeeData(IHRDataSourceUploadSettings settings)
+        public override IHRDataSourceUploadResult UploadEmployeeData(IHRDataSourceUploadSettings settings)
         {
             throw new NotImplementedException();
         }

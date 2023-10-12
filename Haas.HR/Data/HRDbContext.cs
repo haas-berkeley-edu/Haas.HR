@@ -19,10 +19,13 @@ namespace Haas.HR.Data
         public DbSet<PingboardEmployee> PingboardEmployees { get; set; }
         public DbSet<UCPathEmployee> UCPathEmployees { get; set; }
 
+        public DbSet<HRDataSourceConnectionSettings> HRDataSourceConnectionSettings { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PingboardEmployee>().ToTable("PingboardEmployee");
             modelBuilder.Entity<UCPathEmployee>().ToTable("UCPathEmployee");
+            modelBuilder.Entity<HRDataSourceConnectionSettings>().ToTable("HRDataSourceConnectionSettings");
         }
     }
 }
