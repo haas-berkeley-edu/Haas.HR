@@ -1,9 +1,12 @@
-﻿using Haas.HR.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Microsoft.EntityFrameworkCore;
+
+using Haas.HR.Models;
 
 namespace Haas.HR
 {
@@ -14,7 +17,28 @@ namespace Haas.HR
     {
         public virtual IHRDataSourceDownloadResult DownloadEmployeeData(IHRDataSourceDownloadSettings settings)
         {
-            throw new NotImplementedException();
+            IHRDataSourceDownloadResult result = new HRDataSourceDownloadResult();
+            IList<IEmployee> sourceEmployees = this.GetSourceEmployees(settings.ConnectionSettings);
+            IList<IEmployee> destinationEmployees = this.GetDestinationEmployees();
+            foreach (IEmployee sourceEmployee in sourceEmployees)
+            {
+                //check to see if the master employee record exists, if it does not then do nothing since only UCPath can create
+                //new master employee records
+                IEmployee destinationEmployee = destinationEmployees.Single(a => a.UID == sourceEmployee.UID);
+                if (destinationEmployee == null)
+                {
+                    //if record does not exist then add it
+                    sourceEmployee.CreateOn = DateTime.Now;
+                    this.AddDestinationEmployee(sourceEmployee);
+                    continue;
+                }
+                //update the pingboard employee record with the values in pingboard
+                sourceEmployee.CreateOn = destinationEmployee.CreateOn;
+                sourceEmployee.DeletedOn = destinationEmployee.DeletedOn;
+                sourceEmployee.LastUpdatedOn = DateTime.Now;
+                this.AddDestinationEmployee(sourceEmployee);
+            }
+            return result;
         }
 
         public virtual string GetEmployeeProfileUrl(string uid)
@@ -29,12 +53,55 @@ namespace Haas.HR
 
         public virtual IHRDataSourceUploadResult UploadEmployeeData(IHRDataSourceUploadSettings settings)
         {
-            throw new NotImplementedException();
+            IHRDataSourceUploadResult result = new HRDataSourceUploadResult();
+            IList<IEmployee> sourceEmployees = this.GetSourceEmployees(settings.ConnectionSettings);
+            IList<IEmployee> destinationEmployees = this.GetDestinationEmployees();
+
+            //loop through existing pingboard employees
+            foreach (IEmployee destinationEmployee in destinationEmployees)
+            {
+                //should the employee be removed
+                if (destinationEmployee.DeletedOn != null)
+                {
+                    this.DeleteSourceEmployee(settings.ConnectionSettings, destinationEmployee.ID);
+                    continue;
+                }
+
+                //check to tsee if the source employee record exists
+                IEmployee sourceEmployee = sourceEmployees.Single(a => a.ID == destinationEmployee.ID);
+                if (sourceEmployee == null)
+                {
+                    //if record does not exist then add it
+                    this.AddSourceEmployee(settings.ConnectionSettings, destinationEmployee);
+                    continue;
+                }
+
+                //update the pingboard employee record with the values in pingboard
+                this.UpdateSourceEmployee(settings.ConnectionSettings, destinationEmployee);
+            }
+            return result;
         }
 
         public virtual IHRDataSourceMergeResult MergeEmployeeData(IHRDataSourceMergeSettings settings)
         {
-            throw new NotImplementedException();
+            IHRDataSourceMergeResult result = new HRDataSourceMergeResult();
+
+            //loop through the pingboard employee records
+            IList<IEmployee> employees = this.GetDestinationEmployees();
+            foreach (IEmployee employee in employees)
+            {
+                //if the record exists in the master employee record then update it with the Working Title and Reports To
+                MasterEmployee? masterEmployee = HRDataSourceManager.HRDbContext.MasterEmployees.Single(a => a.UID == employee.UID);
+                if ((masterEmployee == null) || (masterEmployee.DeletedOn != null))
+                {
+                    this.DeleteDestinationEmployee(employee);
+                    continue;
+                }
+
+                //update the master employee record
+                HRDataSourceManager.HRDbContext.MasterEmployees.Update(masterEmployee);
+            }
+            return result;
         }
 
         /// <summary>
@@ -42,7 +109,7 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public virtual List<IEmployee> GetSourceEmployees(IHRDataSourceConnectionSettings settings)
+        public virtual IList<IEmployee> GetSourceEmployees(IHRDataSourceConnectionSettings settings)
         {
             throw new NotImplementedException();
         }
@@ -52,7 +119,7 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public IEmployee AddSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee)
+        public virtual IEmployee AddSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee)
         {
             throw new NotImplementedException();
         }
@@ -62,7 +129,7 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public IEmployee DeleteSourceEmployee(IHRDataSourceConnectionSettings settings, string ID)
+        public virtual IEmployee DeleteSourceEmployee(IHRDataSourceConnectionSettings settings, string ID)
         {
             throw new NotImplementedException();
         }
@@ -72,11 +139,34 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public IEmployee UpdateSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee)
+        public virtual IEmployee UpdateSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Returns the DbSet of employees from the databasefor this HRDataSource 
+        /// </summary>
+        /// <returns></returns>
+        public virtual IList<IEmployee> GetDestinationEmployees()
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual IEmployee AddDestinationEmployee(IEmployee employee)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual IEmployee DeleteDestinationEmployee(IEmployee employee)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual IEmployee UpdateDestinationEmployee(IEmployee employee)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class HRDataSourceDownloadSettings : IHRDataSourceDownloadSettings

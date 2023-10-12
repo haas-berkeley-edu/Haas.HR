@@ -1,4 +1,5 @@
 ﻿using Haas.HR.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Haas.HR
 {
@@ -19,7 +20,7 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        List<IEmployee> GetSourceEmployees(IHRDataSourceConnectionSettings settings);
+        IList<IEmployee> GetSourceEmployees(IHRDataSourceConnectionSettings settings);
 
         /// <summary>
         /// Returns the employee data for the specified settings
@@ -69,6 +70,33 @@ namespace Haas.HR
         /// <param name="uid"></param>
         /// <returns></returns>
         string GetEmployeeProfileUrl(string uid);
+
+        /// <summary>
+        /// Returns the DbSet of employees from the databasefor this HRDataSource 
+        /// </summary>
+        /// <returns></returns>
+        IList<IEmployee> GetDestinationEmployees();
+
+        /// <summary>
+        /// Returns the employee data for the specified settings
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        IEmployee AddDestinationEmployee(IEmployee employee);
+
+        /// <summary>
+        /// Returns the employee data for the specified settings
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        IEmployee DeleteDestinationEmployee(IEmployee employee);
+
+        /// <summary>
+        /// Returns the employee data for the specified settings
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        IEmployee UpdateDestinationEmployee(IEmployee employee);
     }
 
     /// <summary>

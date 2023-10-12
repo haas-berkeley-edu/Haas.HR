@@ -20,10 +20,11 @@ namespace Haas.HR
     /// </summary>
     public class PingboardDataSource : HRDataSourceBase
     {
+        /*
         public override IHRDataSourceDownloadResult DownloadEmployeeData(IHRDataSourceDownloadSettings settings)
         {
             IHRDataSourceDownloadResult result = new HRDataSourceDownloadResult();
-            List<IEmployee> pingboardEmployees = this.GetSourceEmployees(settings.ConnectionSettings);
+            IList<IEmployee> pingboardEmployees = this.GetSourceEmployees(settings.ConnectionSettings);
             foreach(IEmployee employee in pingboardEmployees)
             {
                 //check to see if the master employee record exists, if it does not then do nothing since only UCPath can create
@@ -45,6 +46,7 @@ namespace Haas.HR
             }
             return result;
         }
+        */
 
         public override string GetEmployeeProfileUrl(string uid)
         {
@@ -56,10 +58,30 @@ namespace Haas.HR
             return "https://orgchart.haas.berkele.edu/id=" + pingboardEmployee.ID;
         }
 
+        public override IEmployee AddDestinationEmployee(IEmployee employee)
+        {
+            HRDataSourceManager.HRDbContext.PingboardEmployees.Add(employee as PingboardEmployee);
+            return employee;
+        }
+
+        public override IEmployee DeleteDestinationEmployee(IEmployee employee)
+        {
+            employee.DeletedOn = DateTime.Now;
+            HRDataSourceManager.HRDbContext.PingboardEmployees.Update(employee as PingboardEmployee);
+            return employee;
+        }
+
+        public override IEmployee UpdateDestinationEmployee(IEmployee employee)
+        {
+            HRDataSourceManager.HRDbContext.PingboardEmployees.Update(employee as PingboardEmployee);
+            return employee;
+    }
+
+        /*
         public override IHRDataSourceUploadResult UploadEmployeeData(IHRDataSourceUploadSettings settings)
         {
             IHRDataSourceUploadResult result = new HRDataSourceUploadResult();
-            List<IEmployee> cloudPingboardEmployees = this.GetSourceEmployees(settings.ConnectionSettings);
+            IList<IEmployee> cloudPingboardEmployees = this.GetSourceEmployees(settings.ConnectionSettings);
 
             //loop through existing pingboard employees
             foreach (PingboardEmployee pingboardEmployee in HRDataSourceManager.HRDbContext.PingboardEmployees)
@@ -91,7 +113,9 @@ namespace Haas.HR
             }
             return result;
         }
+        */
 
+        /*
         public override IHRDataSourceMergeResult MergeEmployeeData(IHRDataSourceMergeSettings settings)
         {
             IHRDataSourceMergeResult result = new HRDataSourceMergeResult();
@@ -110,6 +134,16 @@ namespace Haas.HR
                 HRDataSourceManager.HRDbContext.MasterEmployees.Update(masterEmployee);
             }
             return result;
+        }
+        */
+
+        /// <summary>
+        /// Returns the DbSet of employees from the databasefor this HRDataSource 
+        /// </summary>
+        /// <returns></returns>
+        public override IList<IEmployee> GetDestinationEmployees()
+        {
+            return HRDataSourceManager.HRDbContext.PingboardEmployees.ToList<IEmployee>();
         }
     }
 }
