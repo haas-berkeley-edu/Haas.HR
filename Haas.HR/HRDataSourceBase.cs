@@ -98,7 +98,7 @@ namespace Haas.HR
         {
             IHRDataSourceMergeResult result = new HRDataSourceMergeResult();
 
-            //loop through the pingboard employee records
+            //loop through the datasource source employee records
             IList<IEmployee> employees = this.GetDestinationEmployees();
             foreach (IEmployee employee in employees)
             {
@@ -113,7 +113,18 @@ namespace Haas.HR
                 //update the master employee record
                 HRDataSourceManager.HRDbContext.MasterEmployees.Update(masterEmployee);
             }
+            this.OnAfterMergeEmployeeData(settings);
             return result;
+        }
+
+        /// <summary>
+        /// Allows extending classes to implement their own merge logic to be executed after the merge operation
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        protected virtual void OnAfterMergeEmployeeData(IHRDataSourceMergeSettings settings)
+        {
+            return;
         }
 
         /// <summary>
