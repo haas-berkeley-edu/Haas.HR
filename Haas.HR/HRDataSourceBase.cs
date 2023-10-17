@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 using Haas.HR.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Data.SqlTypes;
+using Microsoft.Data.SqlClient;
 
 namespace Haas.HR
 {
@@ -166,6 +169,42 @@ namespace Haas.HR
         public abstract IEmployee DeleteDestinationEmployee(IEmployee employee);
 
         public abstract IEmployee UpdateDestinationEmployee(IEmployee employee);
+
+        //Returns the API Credentials from the rsp_API_Resources_S table in PDB01 Database
+        protected ApiCredentials GetApiCredentials(string apiName)
+        {
+            ApiCredentials result = new ApiCredentials();
+            using (SqlConnection sqlConn  = new SqlConnection("Server=sql-pdb01.haas.berkeley.edu;Database=Reference;Integrated Security=True")) { 
+                sqlConn.Open();
+
+                using (SqlCommand sqlCmd = sqlConn.CreateCommand())
+                {
+                    sqlCmd.CommandText = "rsp_API_Resources_S";
+                    sqlCmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    sqlCmd.Parameters.Add("@API_Name", System.Data.SqlDbType.VarChar).Value = apiName;
+
+                    SqlParameter sqlOutputParam1 = sqlCmd.Parameters.Add("@API_ID", System.Data.SqlDbType.VarChar);
+                    sqlOutputParam1.Direction = System.Data.ParameterDirection.Output;
+                    sqlOutputParam1.Size = 500;
+
+                    SqlParameter sqlOutputParam2 = sqlCmd.Parameters.Add("@API_Key", System.Data.SqlDbType.VarChar);
+                    sqlOutputParam2.Direction = System.Data.ParameterDirection.Output;
+                    sqlOutputParam2.Size = 500;
+
+                    try { sqlCmd.ExecuteNonQuery(); }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+
+                    result.APIID = (string)sqlCmd.Parameters["@API_ID"].Value;
+                    result.APIKey = (string)sqlCmd.Parameters["@API_Key"].Value;
+                }
+            }
+
+            return result;
+        }
     }
 
     public class HRDataSourceDownloadSettings : IHRDataSourceDownloadSettings
