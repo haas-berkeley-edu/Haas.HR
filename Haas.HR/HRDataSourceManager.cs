@@ -1,4 +1,5 @@
 ﻿using Haas.HR.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,9 @@ namespace Haas.HR
         private static HRDbContext context;
 
         static HRDataSourceManager() {
-            context = new HRDbContext(null);
+            DbContextOptions<HRDbContext> options = new DbContextOptions<HRDbContext>();
+            context = new HRDbContext(options);
+            context.Database.EnsureCreated();
         }
 
         /// <summary>

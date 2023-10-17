@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 using Haas.HR.Models;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Haas.HR.Data
 {
@@ -21,14 +22,23 @@ namespace Haas.HR.Data
 
         public DbSet<MasterEmployee> MasterEmployees { get; set; }
 
+        public DbSet<SupervisorCalGroupEmployee> SupervisorCalGroupEmployees { get; set; }
+
         public DbSet<HRDataSourceConnectionSettings> HRDataSourceConnectionSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<PingboardEmployee>().ToTable("PingboardEmployee");
-            modelBuilder.Entity<UCPathEmployee>().ToTable("UCPathEmployee");
-            modelBuilder.Entity<MasterEmployee>().ToTable("MasterEmployee");
-            modelBuilder.Entity<HRDataSourceConnectionSettings>().ToTable("HRDataSourceConnectionSettings");
+            modelBuilder.HasDefaultSchema("dbo");
+            modelBuilder.Entity<PingboardEmployee>().ToTable("PingboardEmployee", "dbo");
+            modelBuilder.Entity<UCPathEmployee>().ToTable("UCPathEmployee", "dbo");
+            modelBuilder.Entity<MasterEmployee>().ToTable("MasterEmployee", "dbo");
+            modelBuilder.Entity<SupervisorCalGroupEmployee>().ToTable("SupervisorCalGroupEmployee", "dbo");
+            modelBuilder.Entity<HRDataSourceConnectionSettings>().ToTable("HRDataSourceConnectionSettings", "dbo");
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("server=ssis17.haas.berkeley.edu;database=HR;trusted_connection=true;");
         }
     }
 }

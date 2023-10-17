@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace Haas.HR.Models
 {
-    [Table("MasterEmployee", Schema = "dbo")]
-    public class MasterEmployee : EmployeeBase
+    [Table("SupervisorCalGroupEmployee", Schema = "dbo")]
+    public class SupervisorCalGroupEmployee : EmployeeBase
     {
-        public string LastName { get; set; }
-        public string FirstName { get; set; }
     }
 }
