@@ -1,8 +1,10 @@
 ﻿using Haas.HR.Data;
+using Haas.HR.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,7 +25,7 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public List<IHRDataSourceSynchronizeResult> SynchronizeAllEmployeeData(IHRDataSourceSynchronizeSettings settings)
+        public async Task<List<IHRDataSourceSynchronizeResult>> SynchronizeAllEntityData(IHRDataSourceSynchronizeSettings settings)
         {
             List<IHRDataSourceSynchronizeResult> results = new List<IHRDataSourceSynchronizeResult>();
             foreach (IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings.OrderBy(a => a.ExecutionOrder))
@@ -35,7 +37,7 @@ namespace Haas.HR
                     continue;
                 }
                 HRDataSourceDownloadSettings downloadSettings = new HRDataSourceDownloadSettings(connectionSettings);
-                result.DownloadResult = hrDataSource.DownloadEmployeeData(downloadSettings);
+                result.DownloadResult = await hrDataSource.DownloadEntityData(downloadSettings);
                 results.Add(result);
             }
             foreach (IHRDataSourceSynchronizeResult result in results)
@@ -46,7 +48,7 @@ namespace Haas.HR
                     continue;
                 }
                 HRDataSourceMergeSettings mergeSettings = new HRDataSourceMergeSettings(result.ConnectionSettings);
-                result.MergeResult = hrDataSource.MergeEmployeeData(mergeSettings);
+                result.MergeResult = hrDataSource.MergeEntityData(mergeSettings);
                 results.Add(result);
             }
             foreach (IHRDataSourceSynchronizeResult result in results)
@@ -57,7 +59,7 @@ namespace Haas.HR
                     continue;
                 }
                 HRDataSourceUploadSettings mergeSettings = new HRDataSourceUploadSettings(result.ConnectionSettings);
-                result.UploadResult = hrDataSource.UploadEmployeeData(mergeSettings);
+                result.UploadResult = hrDataSource.UploadEntityData(mergeSettings);
                 results.Add(result);
             }
             return results;
@@ -68,7 +70,7 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public List<IHRDataSourceUploadResult> UploadAllEmployeeData(IHRDataSourceUploadSettings settings)
+        public List<IHRDataSourceUploadResult> UploadAllEntityData(IHRDataSourceUploadSettings settings)
         {
             List<IHRDataSourceUploadResult> results = new List<IHRDataSourceUploadResult>();
             foreach(IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings.OrderBy(a => a.ExecutionOrder))
@@ -79,7 +81,7 @@ namespace Haas.HR
                     continue;
                 }
                 IHRDataSourceUploadSettings uploadSettings = new HRDataSourceUploadSettings(connectionSettings);
-                IHRDataSourceUploadResult result = hrDataSource.UploadEmployeeData(uploadSettings);
+                IHRDataSourceUploadResult result = hrDataSource.UploadEntityData(uploadSettings);
                 results.Add(result);
             }
             return results;
@@ -90,7 +92,7 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public List<IHRDataSourceDownloadResult> DownloadAllEmployeeData(IHRDataSourceDownloadSettings settings)
+        public async Task<List<IHRDataSourceDownloadResult>> DownloadAllEntityData(IHRDataSourceDownloadSettings settings)
         {
             List<IHRDataSourceDownloadResult> results = new List<IHRDataSourceDownloadResult>();
             foreach (IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings.OrderBy(a => a.ExecutionOrder))
@@ -101,18 +103,18 @@ namespace Haas.HR
                     continue;
                 }
                 HRDataSourceDownloadSettings downloadSettings = new HRDataSourceDownloadSettings(connectionSettings);
-                IHRDataSourceDownloadResult result = hrDataSource.DownloadEmployeeData(downloadSettings);
+                IHRDataSourceDownloadResult result = await hrDataSource.DownloadEntityData(downloadSettings);
                 results.Add(result);
             }
             return results;
         }
 
         /// <summary>
-        /// Merges data from the Employee table associated with this Hr Data Source into the Employee Master record
+        /// Merges data from the Entity table associated with this Hr Data Source into the Entity Master record
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public List<IHRDataSourceMergeResult> MergeAllEmployeeData(IHRDataSourceMergeSettings settings)
+        public List<IHRDataSourceMergeResult> MergeAllEntityData(IHRDataSourceMergeSettings settings)
         {
             List<IHRDataSourceMergeResult> results = new List<IHRDataSourceMergeResult>();
             foreach (IHRDataSourceConnectionSettings connectionSettings in context.HRDataSourceConnectionSettings.OrderBy(a => a.ExecutionOrder))
@@ -123,7 +125,7 @@ namespace Haas.HR
                     continue;
                 }
                 HRDataSourceMergeSettings mergeSettings = new HRDataSourceMergeSettings(connectionSettings);
-                IHRDataSourceMergeResult result = hrDataSource.MergeEmployeeData(mergeSettings);
+                IHRDataSourceMergeResult result = hrDataSource.MergeEntityData(mergeSettings);
                 results.Add(result);
             }
             return results;

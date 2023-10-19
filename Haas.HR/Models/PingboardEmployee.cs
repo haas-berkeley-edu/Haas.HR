@@ -10,6 +10,7 @@ namespace Haas.HR.Models
     [Table("PingboardEmployee", Schema = "dbo")]
     public class PingboardEmployee : EmployeeBase
     {
+        /*
         public string Full_name { get; set; }
         public string First_name { get; set; }
         public string Last_name { get; set; }
@@ -51,5 +52,6 @@ namespace Haas.HR.Models
         public string College { get; set; }
         public string Dietary_Restrictions { get; set; }
         public string Location { get; set; }
+        */
     }
 }

@@ -12,44 +12,44 @@ namespace Haas.HR
     /// </summary>
     public abstract class CalGroupBase : HRDataSourceBase
     {
-        public override IList<IEmployee> GetDestinationEmployees()
+        public override IQueryable<IEntity> GetDestinationEntities()
         {
             throw new NotImplementedException();
         }
 
-        public override IEmployee UpdateDestinationEmployee(IEmployee employee)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public override IEmployee AddDestinationEmployee(IEmployee employee)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override IEmployee AddSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override IEmployee DeleteDestinationEmployee(IEmployee employee)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override IEmployee DeleteSourceEmployee(IHRDataSourceConnectionSettings settings, string ID)
+        public override IEntity UpdateDestinationEntity(IEntity employee)
         {
             throw new NotImplementedException();
         }
 
 
-        public override IList<IEmployee> GetSourceEmployees(IHRDataSourceConnectionSettings settings)
+        public override IEntity AddDestinationEntity(IEntity employee)
         {
             throw new NotImplementedException();
         }
 
-        public override IEmployee UpdateSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee)
+        public override IEntity AddSourceEntity(IHRDataSourceConnectionSettings settings, IEntity employee)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEntity DeleteDestinationEntity(IEntity employee)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEntity DeleteSourceEntity(IHRDataSourceConnectionSettings settings, string ID)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public override Task<IList<IEntity>> GetSourceEntities(IHRDataSourceConnectionSettings settings)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEntity UpdateSourceEntity(IHRDataSourceConnectionSettings settings, IEntity employee)
         {
             throw new NotImplementedException();
         }

@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 using Haas.HR.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Data.SqlTypes;
-using Microsoft.Data.SqlClient;
+using System.Net.Http.Json;
 
 namespace Haas.HR
 {
@@ -18,91 +19,100 @@ namespace Haas.HR
     /// </summary>
     public abstract class HRDataSourceBase : IHRDataSource
     {
-        public virtual IHRDataSourceDownloadResult DownloadEmployeeData(IHRDataSourceDownloadSettings settings)
+        //private static HttpClient httpClient = null;
+
+        static HRDataSourceBase()
+        {
+            //httpClient = new HttpClient();
+        }
+
+        public virtual async Task<IHRDataSourceDownloadResult> DownloadEntityData(IHRDataSourceDownloadSettings settings)
         {
             IHRDataSourceDownloadResult result = new HRDataSourceDownloadResult();
-            IList<IEmployee> sourceEmployees = this.GetSourceEmployees(settings.ConnectionSettings);
-            IList<IEmployee> destinationEmployees = this.GetDestinationEmployees();
-            foreach (IEmployee sourceEmployee in sourceEmployees)
-            {
-                //check to see if the master employee record exists, if it does not then do nothing since only UCPath can create
-                //new master employee records
-                IEmployee destinationEmployee = destinationEmployees.Single(a => a.UID == sourceEmployee.UID);
-                if (destinationEmployee == null)
-                {
-                    //if record does not exist then add it
-                    sourceEmployee.CreateOn = DateTime.Now;
-                    this.AddDestinationEmployee(sourceEmployee);
-                    continue;
-                }
-                //update the pingboard employee record with the values in pingboard
-                sourceEmployee.CreateOn = destinationEmployee.CreateOn;
-                sourceEmployee.DeletedOn = destinationEmployee.DeletedOn;
-                sourceEmployee.LastUpdatedOn = DateTime.Now;
-                this.AddDestinationEmployee(sourceEmployee);
-            }
+            IList<IEntity> sourceEntities = await this.GetSourceEntities(settings.ConnectionSettings);
+            IQueryable<IEntity> destinationEntities = this.GetDestinationEntities();
+            IList<IEntity> addEntities = (IList<IEntity>)this.GetDbSetInserts(sourceEntities, destinationEntities);
+            this.AddDestinationEntities(addEntities);
+            IList<IEntity> updateEntities = (IList<IEntity>)this.GetDbSetUpdates(sourceEntities, destinationEntities);
+            this.UpdateDestinationEntities(updateEntities);
+            HRDataSourceManager.HRDbContext.SaveChanges();
             return result;
         }
 
-        public virtual string GetEmployeeProfileUrl(string uid)
+        /*
+        public static HttpClient HttpClient 
         {
-            throw new NotImplementedException();
+            get { return httpClient; }
+        }
+        */
+
+        public virtual string GetEntityProfileUrl(string uid)
+        {
+            return null;
         }
 
-        public virtual IHRDataSourceSynchronizeResult SynchronizeEmployeeData(IHRDataSourceSynchronizeSettings settings)
+        public virtual async Task<IHRDataSourceSynchronizeResult> SynchronizeEntityData(IHRDataSourceSynchronizeSettings settings)
         {
             IHRDataSourceSynchronizeResult result = new HRDataSourceSynchronizeResult();
-            result.DownloadResult = this.DownloadEmployeeData(settings.DownloadSettings);
+            result.DownloadResult = await this.DownloadEntityData(settings.DownloadSettings);
             if (result.DownloadResult == null)
             {
                 return result;
             }
-            result.MergeResult = this.MergeEmployeeData(settings.MergeSettings);
+            result.MergeResult = this.MergeEntityData(settings.MergeSettings);
             if (result.MergeResult == null)
             {
                 return result;
             }
-            result.UploadResult = this.UploadEmployeeData(settings.UploadSettings);
+            result.UploadResult = this.UploadEntityData(settings.UploadSettings);
             return result;
         }
 
-        public virtual IHRDataSourceUploadResult UploadEmployeeData(IHRDataSourceUploadSettings settings)
+        public virtual IHRDataSourceUploadResult UploadEntityData(IHRDataSourceUploadSettings settings)
         {
             IHRDataSourceUploadResult result = new HRDataSourceUploadResult();
-            IList<IEmployee> sourceEmployees = this.GetSourceEmployees(settings.ConnectionSettings);
-            IList<IEmployee> destinationEmployees = this.GetDestinationEmployees();
+            /*
+            IList<IEntity> sourceEntities = this.GetSourceEntities(settings.ConnectionSettings);
+            IQueryable<IEntity> destinationEntities = this.GetDestinationEntities();
 
             //loop through existing pingboard employees
-            foreach (IEmployee destinationEmployee in destinationEmployees)
+            foreach (IEntity destinationEntity in destinationEntities)
             {
                 //should the employee be removed
-                if (destinationEmployee.DeletedOn != null)
+                if (destinationEntity.DeletedOn != null)
                 {
-                    this.DeleteSourceEmployee(settings.ConnectionSettings, destinationEmployee.ID);
+                    this.DeleteSourceEntity(settings.ConnectionSettings, destinationEntity.ID);
                     continue;
                 }
 
                 //check to tsee if the source employee record exists
-                IEmployee sourceEmployee = sourceEmployees.Single(a => a.ID == destinationEmployee.ID);
-                if (sourceEmployee == null)
+                IEntity sourceEntity = sourceEntities.Single(a => a.ID == destinationEntity.ID);
+                if (sourceEntity == null)
                 {
                     //if record does not exist then add it
-                    this.AddSourceEmployee(settings.ConnectionSettings, destinationEmployee);
+                    this.AddSourceEntity(settings.ConnectionSettings, destinationEntity);
                     continue;
                 }
 
                 //update the pingboard employee record with the values in pingboard
-                this.UpdateSourceEmployee(settings.ConnectionSettings, destinationEmployee);
+                this.UpdateSourceEntity(settings.ConnectionSettings, destinationEntity);
             }
+            */
             return result;
         }
 
-        public virtual IHRDataSourceMergeResult MergeEmployeeData(IHRDataSourceMergeSettings settings)
+        /// <summary>
+        /// Default implementation of Merging Entity data with the employee table
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        public virtual IHRDataSourceMergeResult MergeEntityData(IHRDataSourceMergeSettings settings)
         {
             IHRDataSourceMergeResult result = new HRDataSourceMergeResult();
 
+            /*
             //loop through the datasource source employee records
-            IList<IEmployee> employees = this.GetDestinationEmployees();
+            IQueryable<IEntity> employees = this.GetDestinationEntities();
             foreach (IEmployee employee in employees)
             {
                 //if the record exists in the master employee record then update it with the Working Title and Reports To
@@ -116,7 +126,8 @@ namespace Haas.HR
                 //update the master employee record
                 HRDataSourceManager.HRDbContext.MasterEmployees.Update(masterEmployee);
             }
-            this.OnAfterMergeEmployeeData(settings);
+            */
+            this.OnAfterMergeEntityData(settings);
             return result;
         }
 
@@ -125,7 +136,7 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        protected virtual void OnAfterMergeEmployeeData(IHRDataSourceMergeSettings settings)
+        protected virtual void OnAfterMergeEntityData(IHRDataSourceMergeSettings settings)
         {
             return;
         }
@@ -135,40 +146,128 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public abstract IList<IEmployee> GetSourceEmployees(IHRDataSourceConnectionSettings settings);
+        public abstract Task<IList<IEntity>> GetSourceEntities(IHRDataSourceConnectionSettings settings);
 
         /// <summary>
         /// Returns the employee data for the specified settings
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public abstract IEmployee AddSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee);
+        public abstract IEntity AddSourceEntity(IHRDataSourceConnectionSettings settings, IEntity employee);
 
         /// <summary>
         /// Returns the employee data for the specified settings
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public abstract IEmployee DeleteSourceEmployee(IHRDataSourceConnectionSettings settings, string ID);
+        public abstract IEntity DeleteSourceEntity(IHRDataSourceConnectionSettings settings, string ID);
 
         /// <summary>
         /// Returns the employee data for the specified settings
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public abstract IEmployee UpdateSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee);
+        public abstract IEntity UpdateSourceEntity(IHRDataSourceConnectionSettings settings, IEntity employee);
 
         /// <summary>
         /// Returns the DbSet of employees from the databasefor this HRDataSource 
         /// </summary>
         /// <returns></returns>
-        public abstract IList<IEmployee> GetDestinationEmployees();
+        public abstract IQueryable<IEntity> GetDestinationEntities();
 
-        public abstract IEmployee AddDestinationEmployee(IEmployee employee);
+        public abstract IEntity AddDestinationEntity(IEntity employee);
 
-        public abstract IEmployee DeleteDestinationEmployee(IEmployee employee);
+        public abstract IEntity DeleteDestinationEntity(IEntity employee);
 
-        public abstract IEmployee UpdateDestinationEmployee(IEmployee employee);
+        public abstract IEntity UpdateDestinationEntity(IEntity employee);
+
+        /*
+        /// <summary>
+        /// Helper method that returns a serialized JSON object based on a response
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        protected async Task<dynamic?> ReadFromJsonAsync(string url, Type type)
+        {
+            var response = await PingboardDataSource.HttpClient.GetAsync(url);
+            dynamic? result = await response.Content.ReadFromJsonAsync(type);
+            return result;
+        }
+        */
+
+        /// <summary>
+        /// Gives a collection of records to be merged into a destination collection, returns the records to add to the destination collection
+        /// </summary>
+        /// <param name="sourceCollection"></param>
+        /// <param name="destinationCollection"></param>
+        /// <returns></returns>
+        protected IList<IEntity> GetDbSetInserts(IEnumerable<Haas.HR.Models.IEntity>? sourceCollection, IQueryable<IEntity> destinationCollection)
+        {
+            List<IEntity> result = new List<IEntity>();
+            if (sourceCollection == null)
+            {
+                return result;
+            }
+
+            //loop through and add or update entities
+            foreach (IEntity sourceEntity in sourceCollection)
+            {
+                dynamic? destinationEntity = destinationCollection.First<IEntity>(s => s.PrimaryKey == sourceEntity.PrimaryKey);
+                if (destinationEntity == null)
+                {
+                    sourceEntity.CreatedOn = DateTime.Now;
+                    sourceEntity.LastUpdatedOn = DateTime.Now;
+                    sourceEntity.DeletedOn = null;
+                    result.Add(sourceEntity);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gives a collection of records to be merged into a destination collection, returns the records to update in the destination collection
+        /// </summary>
+        /// <param name="sourceCollection"></param>
+        /// <param name="destinationCollection"></param>
+        /// <returns></returns>
+        protected IList<IEntity> GetDbSetUpdates(IEnumerable<Haas.HR.Models.IEntity>? sourceCollection, IQueryable<IEntity> destinationCollection)
+        {
+            List<IEntity> result = new List<IEntity>();
+            if (sourceCollection == null)
+            {
+                return result;
+            }
+
+            //loop through and add or update entities
+            //loop through and add or update entities
+            foreach (IEntity sourceEntity in sourceCollection)
+            {
+                dynamic? destinationEntity = destinationCollection.First<IEntity>(s => s.PrimaryKey == sourceEntity.PrimaryKey);
+                if (destinationEntity != null)
+                {
+                    sourceEntity.LastUpdatedOn = DateTime.Now;
+                    sourceEntity.DeletedOn = null;
+                    result.Add(sourceEntity);
+                }
+            }
+
+            //loop through and remove any deleteable entities
+            foreach (IEntity destinationEntity in destinationCollection)
+            {
+                IEntity? sourceEntity = sourceCollection.First<IEntity>(s => s.PrimaryKey == destinationEntity.PrimaryKey);
+                if (sourceEntity != null)
+                {
+                    continue;
+                }
+
+                destinationEntity.DeletedOn = DateTime.Now;
+                result.Add(destinationEntity);
+            }
+
+            return result;
+        }
 
         //Returns the API Credentials from the rsp_API_Resources_S table in PDB01 Database
         protected ApiCredentials GetApiCredentials(string apiName)
@@ -204,6 +303,16 @@ namespace Haas.HR
             }
 
             return result;
+        }
+
+        public int AddDestinationEntities(IList<IEntity> employee)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int UpdateDestinationEntities(IList<IEntity> employee)
+        {
+            throw new NotImplementedException();
         }
     }
 

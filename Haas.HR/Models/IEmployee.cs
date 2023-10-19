@@ -6,14 +6,10 @@ using System.Threading.Tasks;
 
 namespace Haas.HR.Models
 {
-    public interface IEmployee
+    public interface IEmployee : IEntity
     {
-        string ID { get; set; }
+        string? ID { get; set; }
 
-        string UID { get; set; }
-
-        DateTime? CreateOn { get; set; }
-        DateTime? LastUpdatedOn { get; set; }
-        DateTime? DeletedOn { get; set; }
+        string? UID { get; set; }
     }
 }

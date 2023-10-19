@@ -13,90 +13,104 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        IHRDataSourceSynchronizeResult SynchronizeEmployeeData(IHRDataSourceSynchronizeSettings settings);
+        Task<IHRDataSourceSynchronizeResult> SynchronizeEntityData(IHRDataSourceSynchronizeSettings settings);
 
         /// <summary>
         /// Returns the employee data for the specified settings
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        IList<IEmployee> GetSourceEmployees(IHRDataSourceConnectionSettings settings);
+        Task<IList<IEntity>> GetSourceEntities(IHRDataSourceConnectionSettings settings);
 
         /// <summary>
         /// Returns the employee data for the specified settings
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        IEmployee AddSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee);
+        IEntity AddSourceEntity(IHRDataSourceConnectionSettings settings, IEntity employee);
 
         /// <summary>
         /// Returns the employee data for the specified settings
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        IEmployee DeleteSourceEmployee(IHRDataSourceConnectionSettings settings, string ID);
+        IEntity DeleteSourceEntity(IHRDataSourceConnectionSettings settings, string ID);
 
         /// <summary>
         /// Returns the employee data for the specified settings
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        IEmployee UpdateSourceEmployee(IHRDataSourceConnectionSettings settings, IEmployee employee);
+        IEntity UpdateSourceEntity(IHRDataSourceConnectionSettings settings, IEntity employee);
 
         /// <summary>
         /// Uploads data from the HR Data Wharehouse into HR Data Source
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        IHRDataSourceUploadResult UploadEmployeeData(IHRDataSourceUploadSettings settings);
+        IHRDataSourceUploadResult UploadEntityData(IHRDataSourceUploadSettings settings);
 
         /// <summary>
         /// Downloads data from the HR Data Source into the HR Data Wharehouse
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        IHRDataSourceDownloadResult DownloadEmployeeData(IHRDataSourceDownloadSettings settings);
+        Task<IHRDataSourceDownloadResult> DownloadEntityData(IHRDataSourceDownloadSettings settings);
 
         /// <summary>
-        /// Merges data from the Employee table associated with this Hr Data Source into the Employee Master record
+        /// Merges data from the Entity table associated with this Hr Data Source into the Entity Master record
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        IHRDataSourceMergeResult MergeEmployeeData(IHRDataSourceMergeSettings settings);
+        IHRDataSourceMergeResult MergeEntityData(IHRDataSourceMergeSettings settings);
 
         /// <summary>
         /// Returns the URL to the profile view for the specified user id in the HR Data Source
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        string GetEmployeeProfileUrl(string uid);
+        string GetEntityProfileUrl(string uid);
 
         /// <summary>
         /// Returns the DbSet of employees from the databasefor this HRDataSource 
         /// </summary>
         /// <returns></returns>
-        IList<IEmployee> GetDestinationEmployees();
+        IQueryable<IEntity> GetDestinationEntities();
+
+        /// <summary>
+        /// Adds the list of employees to the destination
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        int AddDestinationEntities(IList<IEntity> employee);
+
+        /// <summary>
+        /// Udpates the list of employees in the destination
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        int UpdateDestinationEntities(IList<IEntity> employee);
 
         /// <summary>
         /// Returns the employee data for the specified settings
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        IEmployee AddDestinationEmployee(IEmployee employee);
+        IEntity AddDestinationEntity(IEntity employee);
 
         /// <summary>
         /// Returns the employee data for the specified settings
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        IEmployee DeleteDestinationEmployee(IEmployee employee);
+        IEntity DeleteDestinationEntity(IEntity employee);
 
         /// <summary>
         /// Returns the employee data for the specified settings
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        IEmployee UpdateDestinationEmployee(IEmployee employee);
+        IEntity UpdateDestinationEntity(IEntity employee);
     }
 
     /// <summary>
@@ -112,10 +126,10 @@ namespace Haas.HR
     /// </summary>
     public interface IHRDataSourceSynchronizeResult
     {
-        IHRDataSourceConnectionSettings ConnectionSettings { get; set; }
-        IHRDataSourceUploadResult UploadResult { get; set; }
-        IHRDataSourceDownloadResult DownloadResult { get; set;  }
-        IHRDataSourceMergeResult MergeResult { get; set; }
+        IHRDataSourceConnectionSettings? ConnectionSettings { get; set; }
+        IHRDataSourceUploadResult? UploadResult { get; set; }
+        IHRDataSourceDownloadResult? DownloadResult { get; set;  }
+        IHRDataSourceMergeResult? MergeResult { get; set; }
     }
 
     /// <summary>
@@ -172,13 +186,13 @@ namespace Haas.HR
     /// </summary>
     public interface IHRDataSourceConnectionSettings
     {
-        int ID { get; set; }
-        string Name { get; set; }
-        string Desription { get; set; }
-        string UserName { get; set; }
-        string Password { get; set; }
-        string URL { get; set; }
-        string TypeName { get; set; }
-        int ExecutionOrder { get; set; }
+        int? ID { get; set; }
+        string? Name { get; set; }
+        string? Desription { get; set; }
+        string? UserName { get; set; }
+        string? Password { get; set; }
+        string? URL { get; set; }
+        string? TypeName { get; set; }
+        int? ExecutionOrder { get; set; }
     }
 }

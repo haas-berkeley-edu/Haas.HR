@@ -10,7 +10,7 @@ namespace Haas.HR.Models
     [Table("MasterEmployee", Schema = "dbo")]
     public class MasterEmployee : EmployeeBase
     {
-        public string LastName { get; set; }
-        public string FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? FirstName { get; set; }
     }
 }

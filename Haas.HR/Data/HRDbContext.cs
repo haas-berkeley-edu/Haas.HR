@@ -18,6 +18,10 @@ namespace Haas.HR.Data
         }
 
         public DbSet<PingboardEmployee> PingboardEmployees { get; set; }
+        public DbSet<PingboardUser> PingboardUsers { get; set; }
+        public DbSet<PingboardGroup> PingboardGroups { get; set; }
+
+
         public DbSet<UCPathEmployee> UCPathEmployees { get; set; }
 
         public DbSet<MasterEmployee> MasterEmployees { get; set; }
@@ -30,6 +34,8 @@ namespace Haas.HR.Data
         {
             modelBuilder.HasDefaultSchema("dbo");
             modelBuilder.Entity<PingboardEmployee>().ToTable("PingboardEmployee", "dbo");
+            modelBuilder.Entity<PingboardUser>().ToTable("PingboardUser", "dbo");
+            modelBuilder.Entity<PingboardGroup>().ToTable("PingboardGroup", "dbo");
             modelBuilder.Entity<UCPathEmployee>().ToTable("UCPathEmployee", "dbo");
             modelBuilder.Entity<MasterEmployee>().ToTable("MasterEmployee", "dbo");
             modelBuilder.Entity<SupervisorCalGroupEmployee>().ToTable("SupervisorCalGroupEmployee", "dbo");

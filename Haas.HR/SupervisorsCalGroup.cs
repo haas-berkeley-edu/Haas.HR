@@ -18,7 +18,7 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        protected override void OnAfterMergeEmployeeData(IHRDataSourceMergeSettings settings)
+        protected override void OnAfterMergeEntityData(IHRDataSourceMergeSettings settings)
         {
             return;
         }

@@ -8,8 +8,8 @@ namespace Haas.HR.Models
 {
     public class ApiCredentials
     {
-        public string APIKey { get ; set; }
+        public string? APIKey { get ; set; }
 
-        public string APIID { get; set; }
+        public string? APIID { get; set; }
     }
 }
