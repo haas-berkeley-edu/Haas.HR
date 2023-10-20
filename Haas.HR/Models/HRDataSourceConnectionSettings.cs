@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,6 +19,6 @@ namespace Haas.HR.Models
         public string? URL { get; set; }
         public string? TypeName { get; set; }
         public int? ExecutionOrder { get; set; }
-        public override string? PrimaryKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override string? PrimaryKey { get => this.ID.ToString(); set { } }
     }
 }

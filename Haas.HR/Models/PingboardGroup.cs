@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -10,7 +12,9 @@ namespace Haas.HR.Models
     [Table("PingboardGroup", Schema = "dbo")]
     public class PingboardGroup : EntityBase
     {
-        public string? id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int id { get; set; }
         public string? created_at { get; set; }
         public string? updated_at { get; set; }
         public string? name { get; set; }
@@ -25,9 +29,9 @@ namespace Haas.HR.Models
         public bool visible_to_other { get; set; }
         public bool editable_by_owner { get; set; }
         public string? address { get; set; }
-        public float latitude { get; set; }
-        public float longitude { get; set; }
+        public float? latitude { get; set; }
+        public float? longitude { get; set; }
 
-        public override string? PrimaryKey { get => this.id; set => this.id = value; }
+        public override string? PrimaryKey { get => this.id.ToString(); set { } }
     }
 }

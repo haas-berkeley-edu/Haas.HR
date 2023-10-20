@@ -32,7 +32,7 @@ namespace Haas.HR
 
         public override IQueryable<IEntity> GetDestinationEntities()
         {
-            throw new NotImplementedException();
+            return HRDataSourceManager.HRDbContext.PingboardGroups;
         }
 
         /// <summary>
@@ -63,16 +63,16 @@ namespace Haas.HR
                 {
                     var responseMessage = await httpClient.GetAsync(pingboardGroupsApiUrl);
                     dynamic? responseMessageContent = await responseMessage.Content.ReadFromJsonAsync(resultType);
-                    List<PingboardGroup> nextPingboardGroups = responseMessageContent.users;
+                    List<PingboardGroup> nextPingboardGroups = responseMessageContent.groups;
                     result.AddRange(nextPingboardGroups);
-                    if (String.IsNullOrWhiteSpace(responseMessageContent.meta.users.next_href))
+                    if (String.IsNullOrWhiteSpace(responseMessageContent.meta.groups.next_href))
                     {
                         break;
                     }
-                    pingboardGroupsApiUrl = "https://app.pingboard.com" + responseMessageContent.meta.users.next_href;
+                    pingboardGroupsApiUrl = "https://app.pingboard.com" + responseMessageContent.meta.groups.next_href;
                 }
             }
-            return (IList<IEntity>)result;
+            return result.Cast<IEntity>().ToList();
         }
 
         public override IEntity UpdateDestinationEntity(IEntity employee)
@@ -84,5 +84,19 @@ namespace Haas.HR
         {
             throw new NotImplementedException();
         }
+
+        public override int AddDestinationEntities(IList<IEntity> employees)
+        {
+            HRDataSourceManager.HRDbContext.PingboardGroups.AddRange(employees.Cast<PingboardGroup>().ToList());
+            return employees.Count;
+        }
+
+        /*
+        public override int UpdateDestinationEntities(IList<IEntity> employees)
+        {
+            HRDataSourceManager.HRDbContext.PingboardGroups.UpdateRange(employees.Cast<PingboardGroup>().ToList());
+            return employees.Count;
+        }
+        */
     }
 }

@@ -17,7 +17,7 @@ namespace Haas.HR.Models
         public override string? PrimaryKey
         {
             get { return this.ID; }
-            set { this.ID = value; }
+            set { }
         }
     }
 }

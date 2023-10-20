@@ -34,8 +34,8 @@ namespace Haas.HR
             IList<IEntity> addEntities = (IList<IEntity>)this.GetDbSetInserts(sourceEntities, destinationEntities);
             this.AddDestinationEntities(addEntities);
             IList<IEntity> updateEntities = (IList<IEntity>)this.GetDbSetUpdates(sourceEntities, destinationEntities);
-            this.UpdateDestinationEntities(updateEntities);
-            HRDataSourceManager.HRDbContext.SaveChanges();
+            //this.UpdateDestinationEntities(updateEntities);
+            result.RecordsDownloadedCount = HRDataSourceManager.HRDbContext.SaveChanges();
             return result;
         }
 
@@ -213,7 +213,7 @@ namespace Haas.HR
             //loop through and add or update entities
             foreach (IEntity sourceEntity in sourceCollection)
             {
-                dynamic? destinationEntity = destinationCollection.First<IEntity>(s => s.PrimaryKey == sourceEntity.PrimaryKey);
+                dynamic? destinationEntity = destinationCollection.FirstOrDefault<IEntity>(s => s.PrimaryKey == sourceEntity.PrimaryKey);
                 if (destinationEntity == null)
                 {
                     sourceEntity.CreatedOn = DateTime.Now;
@@ -244,11 +244,13 @@ namespace Haas.HR
             //loop through and add or update entities
             foreach (IEntity sourceEntity in sourceCollection)
             {
-                dynamic? destinationEntity = destinationCollection.First<IEntity>(s => s.PrimaryKey == sourceEntity.PrimaryKey);
+                dynamic? destinationEntity = destinationCollection.FirstOrDefault<IEntity>(s => s.PrimaryKey == sourceEntity.PrimaryKey);
                 if (destinationEntity != null)
                 {
+                    sourceEntity.CreatedOn = destinationEntity.CreatedOn;
                     sourceEntity.LastUpdatedOn = DateTime.Now;
                     sourceEntity.DeletedOn = null;
+                    HRDataSourceManager.HRDbContext.Entry(destinationEntity).CurrentValues.SetValues(sourceEntity);
                     result.Add(sourceEntity);
                 }
             }
@@ -256,7 +258,7 @@ namespace Haas.HR
             //loop through and remove any deleteable entities
             foreach (IEntity destinationEntity in destinationCollection)
             {
-                IEntity? sourceEntity = sourceCollection.First<IEntity>(s => s.PrimaryKey == destinationEntity.PrimaryKey);
+                IEntity? sourceEntity = sourceCollection.FirstOrDefault<IEntity>(s => s.PrimaryKey == destinationEntity.PrimaryKey);
                 if (sourceEntity != null)
                 {
                     continue;
@@ -305,15 +307,17 @@ namespace Haas.HR
             return result;
         }
 
-        public int AddDestinationEntities(IList<IEntity> employee)
+        public virtual int AddDestinationEntities(IList<IEntity> employees)
         {
             throw new NotImplementedException();
         }
 
-        public int UpdateDestinationEntities(IList<IEntity> employee)
+        /*
+        public virtual int UpdateDestinationEntities(IList<IEntity> employees)
         {
             throw new NotImplementedException();
         }
+        */
     }
 
     public class HRDataSourceDownloadSettings : IHRDataSourceDownloadSettings
@@ -398,7 +402,7 @@ namespace Haas.HR
 
     public class HRDataSourceDownloadResult : IHRDataSourceDownloadResult
     {
-
+        public int RecordsDownloadedCount { get; set; }
     }
 
     public class HRDataSourceMergeResult : IHRDataSourceMergeResult

@@ -16,12 +16,22 @@ namespace Haas.HR.MSTest
         }
 
         [TestMethod]
-        public async void DownloaingPingboardUsers()
+        public async Task DownloadingPingboardUsers()
         {
             PingboardUserDataSource pingboardUserDataSource = new PingboardUserDataSource();
             HRDataSourceConnectionSettings connectionSettings = new HRDataSourceConnectionSettings();
             HRDataSourceDownloadSettings settings = new HRDataSourceDownloadSettings(connectionSettings);
             IHRDataSourceDownloadResult result = await pingboardUserDataSource.DownloadEntityData(settings);
+            Assert.IsTrue(result != null);
+        }
+
+        [TestMethod]
+        public async Task DownloadingPingboardGroups()
+        {
+            PingboardGroupDataSource pingboardGroupDataSource = new PingboardGroupDataSource();
+            HRDataSourceConnectionSettings connectionSettings = new HRDataSourceConnectionSettings();
+            HRDataSourceDownloadSettings settings = new HRDataSourceDownloadSettings(connectionSettings);
+            IHRDataSourceDownloadResult result = await pingboardGroupDataSource.DownloadEntityData(settings);
             Assert.IsTrue(result != null);
         }
     }

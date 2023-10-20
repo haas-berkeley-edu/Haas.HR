@@ -82,14 +82,14 @@ namespace Haas.HR
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        int AddDestinationEntities(IList<IEntity> employee);
+        int AddDestinationEntities(IList<IEntity> employees);
 
         /// <summary>
         /// Udpates the list of employees in the destination
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        int UpdateDestinationEntities(IList<IEntity> employee);
+        //int UpdateDestinationEntities(IList<IEntity> employees);
 
         /// <summary>
         /// Returns the employee data for the specified settings
@@ -156,6 +156,7 @@ namespace Haas.HR
     /// </summary>
     public interface IHRDataSourceDownloadResult
     {
+        int RecordsDownloadedCount { get; set; }
     }
 
     /// <summary>
@@ -164,6 +165,7 @@ namespace Haas.HR
     public interface IHRDataSourceDownloadSettings
     {
         IHRDataSourceConnectionSettings ConnectionSettings { get; }
+      
     }
 
     /// <summary>

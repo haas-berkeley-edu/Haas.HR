@@ -43,9 +43,13 @@ namespace Haas.HR
                 pingboardTokenPostParams["client_id"] = apiCredentials.APIID;
                 pingboardTokenPostParams["client_secret"] = apiCredentials.APIKey;
                 HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Post, pingboardTokenApiUrl) { Content = new FormUrlEncodedContent(pingboardTokenPostParams) };
+                var resultType = new
+                {
+                    access_token = ""
+                }.GetType(); 
                 HttpResponseMessage res = await httpClient.SendAsync(req);
-                Dictionary<string, string>? result = await res.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-                return result["access_token"];
+                dynamic? result = await res.Content.ReadFromJsonAsync(resultType);
+                return result.access_token;
             }
         }
 

@@ -71,7 +71,7 @@ namespace Haas.HR
                     pingboardUsersApiUrl = "https://app.pingboard.com" + responseMessageContent.meta.users.next_href;
                 }
             }
-            return (IList<IEntity>)result;
+            return result.Cast<IEntity>().ToList();
         }
 
         public override IEntity AddSourceEntity(IHRDataSourceConnectionSettings settings, IEntity employee)
@@ -103,5 +103,18 @@ namespace Haas.HR
         {
             throw new NotImplementedException();
         }
+        public override int AddDestinationEntities(IList<IEntity> employees)
+        {
+            HRDataSourceManager.HRDbContext.PingboardUsers.AddRange(employees.Cast<PingboardUser>().ToList());
+            return employees.Count;
+        }
+
+        /*
+        public override int UpdateDestinationEntities(IList<IEntity> employees)
+        {
+            HRDataSourceManager.HRDbContext.PingboardUsers.UpdateRange(employees.Cast<PingboardUser>().ToList());
+            return employees.Count;
+        }
+        */
     }
 }
