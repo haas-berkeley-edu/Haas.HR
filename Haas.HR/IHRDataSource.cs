@@ -91,6 +91,7 @@ namespace Haas.HR
         /// <returns></returns>
         //int UpdateDestinationEntities(IList<IEntity> employees);
 
+        /*
         /// <summary>
         /// Returns the employee data for the specified settings
         /// </summary>
@@ -111,6 +112,7 @@ namespace Haas.HR
         /// <param name="settings"></param>
         /// <returns></returns>
         IEntity UpdateDestinationEntity(IEntity employee);
+        */
     }
 
     /// <summary>

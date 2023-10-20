@@ -175,11 +175,13 @@ namespace Haas.HR
         /// <returns></returns>
         public abstract IQueryable<IEntity> GetDestinationEntities();
 
+        /*
         public abstract IEntity AddDestinationEntity(IEntity employee);
 
         public abstract IEntity DeleteDestinationEntity(IEntity employee);
 
         public abstract IEntity UpdateDestinationEntity(IEntity employee);
+        */
 
         /*
         /// <summary>

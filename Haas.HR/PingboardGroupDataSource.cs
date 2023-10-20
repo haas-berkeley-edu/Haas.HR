@@ -10,17 +10,8 @@ namespace Haas.HR
 {
     public class PingboardGroupDataSource : PingboardDataSourceBase
     {
-        public override IEntity AddDestinationEntity(IEntity employee)
-        {
-            throw new NotImplementedException();
-        }
 
         public override IEntity AddSourceEntity(IHRDataSourceConnectionSettings settings, IEntity employee)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override IEntity DeleteDestinationEntity(IEntity employee)
         {
             throw new NotImplementedException();
         }
@@ -73,11 +64,6 @@ namespace Haas.HR
                 }
             }
             return result.Cast<IEntity>().ToList();
-        }
-
-        public override IEntity UpdateDestinationEntity(IEntity employee)
-        {
-            throw new NotImplementedException();
         }
 
         public override IEntity UpdateSourceEntity(IHRDataSourceConnectionSettings settings, IEntity employee)

@@ -89,20 +89,6 @@ namespace Haas.HR
             throw new NotImplementedException();
         }
 
-        public override IEntity AddDestinationEntity(IEntity employee)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override IEntity DeleteDestinationEntity(IEntity employee)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override IEntity UpdateDestinationEntity(IEntity employee)
-        {
-            throw new NotImplementedException();
-        }
         public override int AddDestinationEntities(IList<IEntity> employees)
         {
             HRDataSourceManager.HRDbContext.PingboardUsers.AddRange(employees.Cast<PingboardUser>().ToList());
