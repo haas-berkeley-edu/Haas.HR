@@ -34,5 +34,15 @@ namespace Haas.HR.MSTest
             IHRDataSourceDownloadResult result = await pingboardGroupDataSource.DownloadEntityData(settings);
             Assert.IsTrue(result != null);
         }
+
+        [TestMethod]
+        public async Task DownloadingOfficeSpaceEmployees()
+        {
+            OfficeSpaceEmployeeDataSource officeSpaceEmployeeDataSource = new OfficeSpaceEmployeeDataSource();
+            HRDataSourceConnectionSettings connectionSettings = new HRDataSourceConnectionSettings();
+            HRDataSourceDownloadSettings settings = new HRDataSourceDownloadSettings(connectionSettings);
+            IHRDataSourceDownloadResult result = await officeSpaceEmployeeDataSource.DownloadEntityData(settings);
+            Assert.IsTrue(result != null);
+        }
     }
 }

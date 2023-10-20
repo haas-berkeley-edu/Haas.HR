@@ -17,6 +17,7 @@ namespace Haas.HR.Data
         {
         }
 
+        public DbSet<OfficeSpaceEmployee> OfficeSpaceEmployees { get; set; }
         public DbSet<PingboardEmployee> PingboardEmployees { get; set; }
         public DbSet<PingboardUser> PingboardUsers { get; set; }
         public DbSet<PingboardGroup> PingboardGroups { get; set; }
@@ -33,6 +34,7 @@ namespace Haas.HR.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("dbo");
+            modelBuilder.Entity<OfficeSpaceEmployee>().ToTable("OfficeSpaceEmployee", "dbo");
             modelBuilder.Entity<PingboardEmployee>().ToTable("PingboardEmployee", "dbo");
             modelBuilder.Entity<PingboardUser>().ToTable("PingboardUser", "dbo");
             modelBuilder.Entity<PingboardGroup>().ToTable("PingboardGroup", "dbo");

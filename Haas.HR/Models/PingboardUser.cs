@@ -30,6 +30,7 @@ namespace Haas.HR.Models
         public int? reports_to_id { get; set; }
         public string? bio { get; set; }
         public string? phone { get; set; }
+
         [NotMapped]
         public string[]? skills { get; set; }
         
